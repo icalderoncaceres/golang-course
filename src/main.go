@@ -4,17 +4,16 @@ import(
 	"net/http"
 	"log"
 	"github.com/gorilla/mux"
-	"os"
+	"time"
+	"io"
+	"fmt"
 
 )
 func main(){
 	//Rutas para la entidad campaign
 	r := mux.NewRouter()
-	r.HandleFunc("/campaigns/", handlerCampaignsGet).Methods("GET")
-	r.HandleFunc("/campaign/{id}/", handlerCampaignGet).Methods("GET")
-	r.HandleFunc("/campaigns/", handlerCampaignsPost).Methods("POST")
-	r.HandleFunc("/campaigns/{id}/", handlerCampaignsPut).Methods("PUT")
-	r.HandleFunc("/campaigns/{id}/", handlerCampaignsDelete).Methods("DELETE")
+	r.HandleFunc("/repositories/{search}", handlerRepositoriesGet).Methods("GET") //Buscar una lista de repositorios dependiendiendo de la palabra clave
+	r.HandleFunc("/repository/{key}", handlerRepositoryGet).Methods("GET") //Traer un repositorio en concreto
 
 	//Arrancamos el servidor
 	srv := &http.Server{
@@ -26,36 +25,19 @@ func main(){
         Handler: r, // Pass our instance of gorilla/mux in.
 	}
 	log.Fatal(srv.ListenAndServe())
+	fmt.Print("Server is running on port 9080")
 }
 
 
 
-func handlerCampaignsGet(w http.ResponseWriter, r *http.Request){
+func handlerRepositoriesGet(w http.ResponseWriter, r *http.Request){
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type","application/json")	
+	io.WriteString(w, `{"code": 200,"message":"Repositories List with key=`)
+}
+
+func handlerRepositoryGet(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type","application/json")
-	os.WriteString(w, `{"code": 200,"message":"Campaign List"}`)
-}
-
-func handlerCampaignsPost(w http.ResponseWriter, r *http.Request){
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type","application/json")
-	os.WriteString(w, `{"code":200,"message":"Campaign create"}`)
-}
-
-func handlerCampaignsPut(w http.ResponseWriter, r *http.Request){
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type","application/json")
-	os.WriteString(w, `{"code":200,"message":"Campaign update"`)
-}
-
-func handlerCampaignsDelete(w http.ResponseWriter, r *http.Request){
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type","application/json")
-	os.WriteString(w, `{"code":200,"message":"Campaign delete"`)
-}
-
-func handlerCampaignGet(w http.ResponseWriter, r *http.Request){
-	w.WriteHeader(htt.StatusOK)
-	w.Header().Set("Content-Type","application/json")
-	os.WriteString(w, `{"code":200,"message":"Campaign show"`)	
+	io.WriteString(w, `{"code":200,"message":"Repository show"`)	
 }
